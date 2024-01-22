@@ -39,7 +39,6 @@ resource "aws_internet_gateway" "ec2_igw" {
 }
 resource "aws_route_table" "ec2_rt_public" {
   vpc_id = aws_vpc.ec2_vpc.id
-
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.ec2_igw.id
@@ -71,7 +70,6 @@ resource "aws_nat_gateway" "ec2_nat_private_subnet" {
 }
 resource "aws_route_table" "ec2_rt_private" {
   vpc_id = aws_vpc.ec2_vpc.id
-
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.ec2_nat_private_subnet.id
