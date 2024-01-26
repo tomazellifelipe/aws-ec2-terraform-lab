@@ -1,7 +1,10 @@
+locals {
+  network_prefix = "ec2"
+}
 resource "aws_vpc" "ec2_vpc" {
   cidr_block = "10.0.0.0/24" # 256 ips
   tags = {
-    Name = "ec2-vpc"
+    Name = "${local.network_prefix}-vpc"
   }
 }
 resource "aws_subnet" "ec2_public_a" {
@@ -10,7 +13,7 @@ resource "aws_subnet" "ec2_public_a" {
   map_public_ip_on_launch = true
   availability_zone       = "us-east-1a"
   tags = {
-    Name = "ec2-public-subnet-a"
+    Name = "${local.network_prefix}-public-subnet-a"
   }
 }
 resource "aws_subnet" "ec2_public_b" {
@@ -19,7 +22,7 @@ resource "aws_subnet" "ec2_public_b" {
   map_public_ip_on_launch = true
   availability_zone       = "us-east-1b"
   tags = {
-    Name = "ec2-public-subnet-b"
+    Name = "${local.network_prefix}-public-subnet-b"
   }
 }
 resource "aws_subnet" "ec2_private_a" {
@@ -28,13 +31,13 @@ resource "aws_subnet" "ec2_private_a" {
   map_public_ip_on_launch = false
   availability_zone       = "us-east-1a"
   tags = {
-    Name = "ec2-private-subnet-a"
+    Name = "${local.network_prefix}-private-subnet-a"
   }
 }
 resource "aws_internet_gateway" "ec2_igw" {
   vpc_id = aws_vpc.ec2_vpc.id
   tags = {
-    Name = "ec2-igw"
+    Name = "${local.network_prefix}-igw"
   }
 }
 resource "aws_route_table" "ec2_rt_public" {
@@ -44,7 +47,7 @@ resource "aws_route_table" "ec2_rt_public" {
     gateway_id = aws_internet_gateway.ec2_igw.id
   }
   tags = {
-    Name = "ec2-public-rt"
+    Name = "${local.network_prefix}-public-rt"
   }
 }
 resource "aws_route_table_association" "ec2_public_a" {
@@ -58,14 +61,14 @@ resource "aws_route_table_association" "ec2_public_b" {
 resource "aws_eip" "ec2_ip" {
   domain = "vpc"
   tags = {
-    Name = "ec2-nat-elastic-ip"
+    Name = "${local.network_prefix}-nat-elastic-ip"
   }
 }
 resource "aws_nat_gateway" "ec2_nat_private_subnet" {
   allocation_id = aws_eip.ec2_ip.id
   subnet_id     = aws_subnet.ec2_public_a.id
   tags = {
-    Name = "ec2-nat-private-subnet"
+    Name = "${local.network_prefix}-nat-private-subnet"
   }
 }
 resource "aws_route_table" "ec2_rt_private" {
