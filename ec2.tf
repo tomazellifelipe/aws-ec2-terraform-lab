@@ -41,9 +41,9 @@ resource "aws_launch_template" "ec2_launch_template" {
   }
 }
 resource "aws_autoscaling_group" "ec2_asg" {
-  desired_capacity  = 1
-  max_size          = 1
-  min_size          = 1
+  desired_capacity  = var.autoscaling.desired_capacity
+  max_size          = var.autoscaling.max_size
+  min_size          = var.autoscaling.min_size
   target_group_arns = [aws_lb_target_group.ec2_tg.arn]
   vpc_zone_identifier = [
     aws_subnet.ec2_private_a.id
